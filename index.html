@@ -41,114 +41,45 @@
       font-weight: 600;
     }
 
-    /* 3D scene */
+    /* First-person 3D view */
     .scene {
-      height: 300px;
-      perspective: 700px;
-      background: linear-gradient(#cfe3f5, #f3f3f3);
       position: relative;
-      overflow: hidden;
+      height: 440px;
+      background: #bcd6ee;
     }
-    .ground {
+    .scene canvas { display: block; width: 100%; height: 100%; }
+    .hud {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 300px;
-      height: 300px;
-      margin: -150px 0 0 -150px;
-      background:
-        repeating-linear-gradient(0deg, transparent 0 29px, rgba(0,0,0,0.06) 29px 30px),
-        repeating-linear-gradient(90deg, transparent 0 29px, rgba(0,0,0,0.06) 29px 30px),
-        #dcdcdc;
-      transform: rotateX(58deg) rotateZ(-30deg);
-      transform-style: preserve-3d;
+      left: 12px; right: 12px; top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.82);
+      color: #fff;
+      border-radius: 14px;
+      pointer-events: none;
     }
-    .road {
-      position: absolute;
-      left: 0; right: 0;
-      top: 200px;
-      height: 46px;
-      background: #555;
-    }
-    .road::after {
-      content: "";
-      position: absolute;
-      left: 0; right: 0; top: 22px;
-      height: 2px;
-      background: repeating-linear-gradient(90deg, #fff 0 14px, transparent 14px 28px);
-    }
-    .building {
-      position: absolute;
-      transform-style: preserve-3d;
-    }
-    .building .roof {
-      position: absolute;
-      inset: 0;
-      background: #b8c2cc;
-      transform: translateZ(var(--h));
-      border: 1px solid #9aa5b1;
-    }
-    .building .side {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: var(--h);
-      background: #8e99a6;
-      transform-origin: bottom;
-      transform: rotateX(-90deg);
-    }
-    .building .side2 {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: var(--h);
-      height: 100%;
-      background: #7a8592;
-      transform-origin: right;
-      transform: rotateY(90deg);
-    }
-    .terminal { left: 40px; top: 40px; width: 150px; height: 110px; --h: 60px; }
-    .garage   { left: 210px; top: 60px; width: 70px; height: 90px; --h: 35px; }
-    .label {
-      position: absolute;
-      font-size: 11px;
-      font-weight: 700;
-      color: #222;
-      transform: translateZ(calc(var(--h) + 1px));
-      padding: 6px;
-    }
-
-    .rider, .car, .pin {
-      position: absolute;
-      transform-style: preserve-3d;
-    }
-    .rider {
-      left: 110px; top: 160px;
-      width: 14px; height: 14px;
+    .hud .arrow {
+      flex: none;
+      width: 36px; height: 36px;
       border-radius: 50%;
       background: #276ef1;
-      box-shadow: 0 0 0 6px rgba(39, 110, 241, 0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700;
     }
-    .pin {
-      left: 238px; top: 186px;
-      width: 16px; height: 16px;
-      background: #000;
-      border: 3px solid #fff;
-      transform: translateZ(2px);
-    }
-    .car {
-      left: 226px; top: 212px;
-      width: 34px; height: 18px;
-      background: #111;
-      border-radius: 4px;
-      transform: translateZ(6px);
+    .hud strong { display: block; font-size: 15px; line-height: 1.25; }
+    .hud small { color: #bbb; font-size: 12px; }
+    .fallback {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; text-align: center; color: #333;
     }
 
     /* Bottom sheet */
-    .sheet { padding: 20px; }
+    .sheet { padding: 18px 20px 20px; }
     .eta { font-size: 13px; color: #5e5e5e; margin-bottom: 4px; }
-    .headline { font-size: 22px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
+    .headline { font-size: 21px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
     .driver {
       display: flex;
       align-items: center;
@@ -165,25 +96,6 @@
       font-weight: 700;
     }
     .driver small { color: #5e5e5e; }
-
-    /* Walking route */
-    .route {
-      position: absolute;
-      height: 4px;
-      background: repeating-linear-gradient(90deg, #276ef1 0 8px, transparent 8px 14px);
-      transform-origin: left center;
-      transform: translateZ(1px) scaleX(0);
-      transition: transform 0.6s ease;
-    }
-    .route.a { left: 117px; top: 165px; width: 130px; }
-    .route.b { left: 245px; top: 165px; width: 26px; transform: translateZ(1px) rotate(90deg) scaleX(0); transition-delay: 0.5s; }
-    .scene.walking .route.a { transform: translateZ(1px) scaleX(1); }
-    .scene.walking .route.b { transform: translateZ(1px) rotate(90deg) scaleX(1); }
-    .scene.walking .pin { animation: pulse 1s ease-in-out infinite alternate; }
-    @keyframes pulse { to { background: #276ef1; } }
-
-    .steps { margin: 0 0 14px 18px; font-size: 14px; color: #333; line-height: 1.5; }
-    .steps[hidden] { display: none; }
     .btn {
       width: 100%;
       margin-top: 14px;
@@ -197,6 +109,7 @@
       cursor: pointer;
     }
     .btn:hover { background: #333; }
+    .btn:disabled { background: #777; cursor: default; }
   </style>
 </head>
 <body>
@@ -206,36 +119,19 @@
       <span class="badge">3D Pickup</span>
     </header>
 
-    <section class="scene" id="scene" aria-label="3D view of pickup area">
-      <div class="ground">
-        <div class="road"></div>
-
-        <div class="building terminal">
-          <div class="side"></div><div class="side2"></div><div class="roof"></div>
-          <div class="label">Terminal B</div>
+    <section class="scene" id="scene" aria-label="First-person 3D view of the walk to your pickup spot">
+      <div class="hud">
+        <div class="arrow" id="hudArrow">↑</div>
+        <div>
+          <strong id="hudText">Exit Door 4 and follow the blue path</strong>
+          <small id="hudDist">48 m · about 1 min walk</small>
         </div>
-        <div class="building garage">
-          <div class="side"></div><div class="side2"></div><div class="roof"></div>
-          <div class="label">Garage</div>
-        </div>
-
-        <div class="route a"></div>
-        <div class="route b"></div>
-        <div class="rider" title="You"></div>
-        <div class="pin" title="Pickup spot"></div>
-        <div class="car" title="Your driver"></div>
       </div>
     </section>
 
     <section class="sheet">
       <p class="eta">Driver arriving in 4 min</p>
-      <h1 class="headline" id="headline">Meet at Zone C, Door 4 – Arrivals level</h1>
-
-      <ol class="steps" id="steps" hidden>
-        <li>Exit Terminal B through Door 4</li>
-        <li>Walk 40 m along the curb toward the garage</li>
-        <li>Wait at the black Zone C sign – Jordan pulls up there</li>
-      </ol>
+      <h1 class="headline" id="headline">Meet at Zone C – Arrivals curb</h1>
 
       <div class="driver">
         <div class="avatar">JM</div>
@@ -245,23 +141,222 @@
         </div>
       </div>
 
-      <button class="btn" id="routeBtn" type="button">Show me the way</button>
+      <button class="btn" id="routeBtn" type="button">Hide path</button>
     </section>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    const btn = document.getElementById('routeBtn');
-    const scene = document.getElementById('scene');
-    const steps = document.getElementById('steps');
-    const headline = document.getElementById('headline');
-    const original = headline.textContent;
+    const container = document.getElementById('scene');
 
-    btn.addEventListener('click', () => {
-      const walking = scene.classList.toggle('walking');
-      steps.hidden = !walking;
-      headline.textContent = walking ? 'Follow the blue path – 1 min walk' : original;
-      btn.textContent = walking ? 'Hide route' : 'Show me the way';
+    if (!window.THREE) {
+      container.insertAdjacentHTML('beforeend', '<p class="fallback">3D view could not load. Check your connection and refresh.</p>');
+      throw new Error('three.js failed to load');
+    }
+
+    // ---------- Renderer, camera, scene ----------
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.prepend(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xbcd6ee);
+    scene.fog = new THREE.Fog(0xbcd6ee, 25, 75);
+
+    const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 200);
+    const EYE = 1.6;
+
+    function resize() {
+      const w = container.clientWidth, h = container.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.85));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.6);
+    sun.position.set(12, 20, 8);
+    scene.add(sun);
+
+    // ---------- Helpers ----------
+    function box(w, h, d, color, x, y, z, parent = scene) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshLambertMaterial({ color }));
+      m.position.set(x, y, z);
+      parent.add(m);
+      return m;
+    }
+
+    function label(text, { w = 2, h = 0.7, bg = '#000', fg = '#fff', font = 'bold 64px sans-serif' } = {}) {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = Math.round(512 * h / w);
+      const g = c.getContext('2d');
+      g.fillStyle = bg; g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = fg; g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(text, c.width / 2, c.height / 2);
+      const tex = new THREE.CanvasTexture(c);
+      return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
+    }
+
+    function car(color, x, z) {
+      const g = new THREE.Group();
+      box(1.8, 0.7, 4.4, color, 0, 0.55, 0, g);
+      box(1.6, 0.55, 2.2, color, 0, 1.15, 0.2, g);
+      box(1.62, 0.4, 2.0, 0x223344, 0, 1.15, 0.2, g).scale.set(1, 1, 1.02);
+      [[-0.85, 1.4], [0.85, 1.4], [-0.85, -1.4], [0.85, -1.4]].forEach(([wx, wz]) => {
+        const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.25, 16), new THREE.MeshLambertMaterial({ color: 0x111111 }));
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(wx, 0.35, wz);
+        g.add(wheel);
+      });
+      g.position.set(x, 0, z);
+      scene.add(g);
+      return g;
+    }
+
+    // ---------- World: airport arrivals curb ----------
+    // Layout: terminal on the left (x < -6), sidewalk -6..0, pickup lane + road 0..11. You walk toward -z.
+    box(14, 0.2, 120, 0x9c9c9c, -6, -0.1, -30);          // sidewalk
+    box(12, 0.2, 120, 0x4a4a4a, 6, -0.12, -30);          // road
+    box(0.3, 0.25, 120, 0xf2c94c, 0.15, 0, -30);         // yellow curb
+    for (let z = 20; z > -90; z -= 6) box(0.15, 0.02, 3, 0xffffff, 4, 0.0, z); // lane dashes
+    box(40, 0.2, 120, 0x9db58a, 32, -0.15, -30);         // grass beyond road
+
+    // Terminal building with glass doors
+    box(14, 12, 120, 0xa7b1bb, -13, 6, -30);
+    for (let z = 12; z > -80; z -= 8) {
+      const glass = box(0.1, 2.6, 3, 0x6fa8dc, -5.95, 1.3, z);
+      glass.material.transparent = true; glass.material.opacity = 0.8;
+    }
+    const door4 = label('Door 4', { w: 1.6, h: 0.5, bg: '#276ef1' });
+    door4.position.set(-5.9, 3.1, 4); door4.rotation.y = Math.PI / 2;
+    scene.add(door4);
+
+    // Canopy and columns over the sidewalk
+    box(6.5, 0.3, 120, 0xe6e6e6, -3, 4.6, -30);
+    for (let z = 14; z > -80; z -= 9) box(0.35, 4.6, 0.35, 0x888888, -1.2, 2.3, z);
+
+    // Zone signs along the curb
+    [['Zone A', -8, '#333'], ['Zone B', -20, '#333'], ['Zone C · Uber', -32, '#000']].forEach(([t, z, bg]) => {
+      box(0.1, 3, 0.1, 0x555555, -0.5, 1.5, z);
+      const s = label(t, { w: 2.2, h: 0.6, bg, font: 'bold 56px sans-serif' });
+      s.position.set(-0.5, 3.2, z);
+      scene.add(s);
     });
+
+    // Parked cars and your driver
+    car(0xffffff, 1.5, -14);
+    car(0xb33a3a, 1.5, -23);
+    car(0x8899aa, 1.5, -48);
+    const ride = car(0x111111, 1.5, -36);
+    const rideTag = label('Jordan · ABC 1234', { w: 2.6, h: 0.55, bg: '#276ef1', font: 'bold 44px sans-serif' });
+    rideTag.position.set(1.5, 2.6, -36);
+    scene.add(rideTag);
+
+    // Pickup marker: pulsing ring + light beam
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.6, 0.85, 40),
+      new THREE.MeshBasicMaterial({ color: 0x05a357, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(-0.6, 0.03, -35);
+    scene.add(ring);
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 8, 12),
+      new THREE.MeshBasicMaterial({ color: 0x05a357, transparent: true, opacity: 0.35 }));
+    beam.position.set(-0.6, 4, -35);
+    scene.add(beam);
+
+    // Moving traffic
+    const traffic = [car(0xdddddd, 5.5, -10), car(0x2f6db5, 8.5, -40), car(0xe0a030, 5.5, -60)];
+    traffic[1].rotation.y = Math.PI;
+
+    // ---------- The walking path ----------
+    const path = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-5.2, 0, 4),
+      new THREE.Vector3(-3.6, 0, 1),
+      new THREE.Vector3(-2.4, 0, -4),
+      new THREE.Vector3(-2.2, 0, -14),
+      new THREE.Vector3(-2.2, 0, -28),
+      new THREE.Vector3(-1.5, 0, -33),
+      new THREE.Vector3(-0.6, 0, -35),
+    ]);
+    const pathLength = path.getLength();
+    const route = new THREE.Group();
+    scene.add(route);
+
+    // Translucent ribbon on the ground
+    const N = 200, pos = [], idx = [];
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, p = path.getPointAt(u), t = path.getTangentAt(u);
+      const nx = t.z * 0.45, nz = -t.x * 0.45;
+      pos.push(p.x + nx, 0.02, p.z + nz, p.x - nx, 0.02, p.z - nz);
+      if (i < N) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+    }
+    const ribbonGeo = new THREE.BufferGeometry();
+    ribbonGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    ribbonGeo.setIndex(idx);
+    route.add(new THREE.Mesh(ribbonGeo, new THREE.MeshBasicMaterial({
+      color: 0x276ef1, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false })));
+
+    // Chevrons that ripple forward along the path
+    const chevronShape = new THREE.Shape();
+    chevronShape.moveTo(0, 0.32); chevronShape.lineTo(0.34, -0.02); chevronShape.lineTo(0.2, -0.02);
+    chevronShape.lineTo(0, 0.17); chevronShape.lineTo(-0.2, -0.02); chevronShape.lineTo(-0.34, -0.02);
+    chevronShape.closePath();
+    const chevronGeo = new THREE.ShapeGeometry(chevronShape);
+    const chevrons = [];
+    for (let d = 1; d < pathLength - 0.5; d += 1.2) {
+      const u = d / pathLength, p = path.getPointAt(u), t = path.getTangentAt(u);
+      const holder = new THREE.Group();
+      const mesh = new THREE.Mesh(chevronGeo, new THREE.MeshBasicMaterial({ color: 0x4f8cff, transparent: true, side: THREE.DoubleSide }));
+      mesh.rotation.x = -Math.PI / 2;
+      holder.add(mesh);
+      holder.position.set(p.x, 0.04, p.z);
+      holder.rotation.y = Math.atan2(-t.x, -t.z);
+      route.add(holder);
+      chevrons.push({ u, mat: mesh.material });
+    }
+
+    // ---------- First-person camera ----------
+    const ridePos = new THREE.Vector3(1.5, 1.0, -36);
+    function placeCamera(u, bob = 0) {
+      const p = path.getPointAt(u);
+      const ahead = path.getPointAt(Math.min(u + 0.06, 1));
+      const k = THREE.MathUtils.smoothstep(u, 0.85, 1);
+      const look = new THREE.Vector3(ahead.x, 1.45, ahead.z).lerp(ridePos, k);
+      camera.position.set(p.x, EYE + bob, p.z);
+      camera.lookAt(look);
+    }
+
+    // ---------- Button ----------
+    const btn = document.getElementById('routeBtn');
+    btn.addEventListener('click', () => {
+      route.visible = !route.visible;
+      btn.textContent = route.visible ? 'Hide path' : 'Show path';
+    });
+
+    // ---------- Loop ----------
+    const clock = new THREE.Clock();
+    function animate() {
+      const time = clock.getElapsedTime();
+
+      placeCamera(0, Math.sin(time * 1.2) * 0.02);
+
+      chevrons.forEach(c => {
+        const wave = Math.sin(c.u * 60 - time * 5);
+        c.mat.opacity = 0.35 + 0.65 * Math.max(0, wave);
+      });
+      const s = 1 + 0.25 * Math.sin(time * 3);
+      ring.scale.set(s, s, s);
+      traffic.forEach((c, i) => {
+        c.position.z += (i === 1 ? -1 : 1) * 0.12;
+        if (c.position.z > 20) c.position.z = -90;
+        if (c.position.z < -90) c.position.z = 20;
+      });
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
   </script>
 </body>
 </html>
