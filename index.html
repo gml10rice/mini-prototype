@@ -141,7 +141,7 @@
         </div>
       </div>
 
-      <button class="btn" id="routeBtn" type="button">Hide path</button>
+      <button class="btn" id="routeBtn" type="button">Start walking</button>
     </section>
   </main>
 
@@ -258,11 +258,11 @@
     const ring = new THREE.Mesh(new THREE.RingGeometry(0.6, 0.85, 40),
       new THREE.MeshBasicMaterial({ color: 0x05a357, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
     ring.rotation.x = -Math.PI / 2;
-    ring.position.set(-0.6, 0.03, -35);
+    ring.position.set(-1.2, 0.03, -32.5);
     scene.add(ring);
     const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 8, 12),
       new THREE.MeshBasicMaterial({ color: 0x05a357, transparent: true, opacity: 0.35 }));
-    beam.position.set(-0.6, 4, -35);
+    beam.position.set(-1.2, 4, -32.5);
     scene.add(beam);
 
     // Moving traffic
@@ -276,8 +276,8 @@
       new THREE.Vector3(-2.4, 0, -4),
       new THREE.Vector3(-2.2, 0, -14),
       new THREE.Vector3(-2.2, 0, -28),
-      new THREE.Vector3(-1.5, 0, -33),
-      new THREE.Vector3(-0.6, 0, -35),
+      new THREE.Vector3(-1.9, 0, -30.5),
+      new THREE.Vector3(-1.2, 0, -32.5),
     ]);
     const pathLength = path.getLength();
     const route = new THREE.Group();
@@ -317,7 +317,7 @@
     }
 
     // ---------- First-person camera ----------
-    const ridePos = new THREE.Vector3(1.5, 1.0, -36);
+    const ridePos = new THREE.Vector3(1.5, 1.4, -36);
     function placeCamera(u, bob = 0) {
       const p = path.getPointAt(u);
       const ahead = path.getPointAt(Math.min(u + 0.06, 1));
@@ -327,11 +327,36 @@
       camera.lookAt(look);
     }
 
-    // ---------- Button ----------
+    // ---------- Turn-by-turn HUD ----------
+    const hudArrow = document.getElementById('hudArrow');
+    const hudText = document.getElementById('hudText');
+    const hudDist = document.getElementById('hudDist');
+    const headline = document.getElementById('headline');
+    const steps = [
+      { until: 0.12, arrow: '↖', text: 'Exit Door 4 and bear left' },
+      { until: 0.45, arrow: '↑', text: 'Walk under the canopy past Zone A' },
+      { until: 0.8,  arrow: '↑', text: 'Keep going past Zone B' },
+      { until: 0.97, arrow: '↗', text: 'At Zone C, step toward the curb' },
+      { until: 1.01, arrow: '✓', text: 'You made it – Jordan is right here' },
+    ];
+    function updateHud(u) {
+      const step = steps.find(s => u < s.until);
+      hudArrow.textContent = step.arrow;
+      hudText.textContent = step.text;
+      const left = Math.round(pathLength * (1 - u));
+      hudDist.textContent = left > 0 ? `${left} m to go` : 'Black Toyota Camry · ABC 1234';
+    }
+
+    // ---------- Button: walk the route in first person ----------
     const btn = document.getElementById('routeBtn');
+    const WALK_MS = 16000;
+    let walkStart = null, progress = 0;
     btn.addEventListener('click', () => {
-      route.visible = !route.visible;
-      btn.textContent = route.visible ? 'Hide path' : 'Show path';
+      walkStart = performance.now();
+      progress = 0;
+      btn.disabled = true;
+      btn.textContent = 'Walking…';
+      headline.textContent = 'Follow the blue path';
     });
 
     // ---------- Loop ----------
@@ -339,7 +364,20 @@
     function animate() {
       const time = clock.getElapsedTime();
 
-      placeCamera(0, Math.sin(time * 1.2) * 0.02);
+      if (walkStart !== null) {
+        const raw = Math.min((performance.now() - walkStart) / WALK_MS, 1);
+        progress = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2; // ease in-out
+        updateHud(progress);
+        if (raw === 1) {
+          walkStart = null;
+          btn.disabled = false;
+          btn.textContent = 'Walk again';
+          headline.textContent = "You're at your pickup spot";
+        }
+      }
+      const walking = walkStart !== null;
+      const bob = walking ? Math.abs(Math.sin(progress * pathLength * 1.6)) * 0.05 : Math.sin(time * 1.2) * 0.02;
+      placeCamera(progress === 1 && !walking ? 1 : progress, bob);
 
       chevrons.forEach(c => {
         const wave = Math.sin(c.u * 60 - time * 5);
