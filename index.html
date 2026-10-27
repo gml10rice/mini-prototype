@@ -165,6 +165,38 @@
       font-weight: 700;
     }
     .driver small { color: #5e5e5e; }
+
+    /* Walking route */
+    .route {
+      position: absolute;
+      height: 4px;
+      background: repeating-linear-gradient(90deg, #276ef1 0 8px, transparent 8px 14px);
+      transform-origin: left center;
+      transform: translateZ(1px) scaleX(0);
+      transition: transform 0.6s ease;
+    }
+    .route.a { left: 117px; top: 165px; width: 130px; }
+    .route.b { left: 245px; top: 165px; width: 26px; transform: translateZ(1px) rotate(90deg) scaleX(0); transition-delay: 0.5s; }
+    .scene.walking .route.a { transform: translateZ(1px) scaleX(1); }
+    .scene.walking .route.b { transform: translateZ(1px) rotate(90deg) scaleX(1); }
+    .scene.walking .pin { animation: pulse 1s ease-in-out infinite alternate; }
+    @keyframes pulse { to { background: #276ef1; } }
+
+    .steps { margin: 0 0 14px 18px; font-size: 14px; color: #333; line-height: 1.5; }
+    .steps[hidden] { display: none; }
+    .btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #000;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: #333; }
   </style>
 </head>
 <body>
@@ -174,7 +206,7 @@
       <span class="badge">3D Pickup</span>
     </header>
 
-    <section class="scene" aria-label="3D view of pickup area">
+    <section class="scene" id="scene" aria-label="3D view of pickup area">
       <div class="ground">
         <div class="road"></div>
 
@@ -187,6 +219,8 @@
           <div class="label">Garage</div>
         </div>
 
+        <div class="route a"></div>
+        <div class="route b"></div>
         <div class="rider" title="You"></div>
         <div class="pin" title="Pickup spot"></div>
         <div class="car" title="Your driver"></div>
@@ -197,6 +231,12 @@
       <p class="eta">Driver arriving in 4 min</p>
       <h1 class="headline" id="headline">Meet at Zone C, Door 4 – Arrivals level</h1>
 
+      <ol class="steps" id="steps" hidden>
+        <li>Exit Terminal B through Door 4</li>
+        <li>Walk 40 m along the curb toward the garage</li>
+        <li>Wait at the black Zone C sign – Jordan pulls up there</li>
+      </ol>
+
       <div class="driver">
         <div class="avatar">JM</div>
         <div>
@@ -204,7 +244,24 @@
           <small>Black · ABC 1234</small>
         </div>
       </div>
+
+      <button class="btn" id="routeBtn" type="button">Show me the way</button>
     </section>
   </main>
+
+  <script>
+    const btn = document.getElementById('routeBtn');
+    const scene = document.getElementById('scene');
+    const steps = document.getElementById('steps');
+    const headline = document.getElementById('headline');
+    const original = headline.textContent;
+
+    btn.addEventListener('click', () => {
+      const walking = scene.classList.toggle('walking');
+      steps.hidden = !walking;
+      headline.textContent = walking ? 'Follow the blue path – 1 min walk' : original;
+      btn.textContent = walking ? 'Hide route' : 'Show me the way';
+    });
+  </script>
 </body>
 </html>
