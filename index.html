@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Uber 3D Pickup – Mini Prototype</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #e9e9e9;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .phone {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px 12px;
+      background: #000;
+      color: #fff;
+    }
+    .wordmark { font-weight: 700; font-size: 22px; letter-spacing: -0.5px; }
+    .badge {
+      font-size: 11px;
+      background: #276ef1;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    /* 3D scene */
+    .scene {
+      height: 300px;
+      perspective: 700px;
+      background: linear-gradient(#cfe3f5, #f3f3f3);
+      position: relative;
+      overflow: hidden;
+    }
+    .ground {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 300px;
+      height: 300px;
+      margin: -150px 0 0 -150px;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 29px, rgba(0,0,0,0.06) 29px 30px),
+        repeating-linear-gradient(90deg, transparent 0 29px, rgba(0,0,0,0.06) 29px 30px),
+        #dcdcdc;
+      transform: rotateX(58deg) rotateZ(-30deg);
+      transform-style: preserve-3d;
+    }
+    .road {
+      position: absolute;
+      left: 0; right: 0;
+      top: 200px;
+      height: 46px;
+      background: #555;
+    }
+    .road::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 22px;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, #fff 0 14px, transparent 14px 28px);
+    }
+    .building {
+      position: absolute;
+      transform-style: preserve-3d;
+    }
+    .building .roof {
+      position: absolute;
+      inset: 0;
+      background: #b8c2cc;
+      transform: translateZ(var(--h));
+      border: 1px solid #9aa5b1;
+    }
+    .building .side {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: var(--h);
+      background: #8e99a6;
+      transform-origin: bottom;
+      transform: rotateX(-90deg);
+    }
+    .building .side2 {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: var(--h);
+      height: 100%;
+      background: #7a8592;
+      transform-origin: right;
+      transform: rotateY(90deg);
+    }
+    .terminal { left: 40px; top: 40px; width: 150px; height: 110px; --h: 60px; }
+    .garage   { left: 210px; top: 60px; width: 70px; height: 90px; --h: 35px; }
+    .label {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 700;
+      color: #222;
+      transform: translateZ(calc(var(--h) + 1px));
+      padding: 6px;
+    }
+
+    .rider, .car, .pin {
+      position: absolute;
+      transform-style: preserve-3d;
+    }
+    .rider {
+      left: 110px; top: 160px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #276ef1;
+      box-shadow: 0 0 0 6px rgba(39, 110, 241, 0.25);
+    }
+    .pin {
+      left: 238px; top: 186px;
+      width: 16px; height: 16px;
+      background: #000;
+      border: 3px solid #fff;
+      transform: translateZ(2px);
+    }
+    .car {
+      left: 226px; top: 212px;
+      width: 34px; height: 18px;
+      background: #111;
+      border-radius: 4px;
+      transform: translateZ(6px);
+    }
+
+    /* Bottom sheet */
+    .sheet { padding: 20px; }
+    .eta { font-size: 13px; color: #5e5e5e; margin-bottom: 4px; }
+    .headline { font-size: 22px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
+    .driver {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #f6f6f6;
+      border-radius: 12px;
+    }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #c9c9c9;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+    .driver small { color: #5e5e5e; }
+  </style>
+</head>
+<body>
+  <main class="phone">
+    <header class="topbar">
+      <span class="wordmark">Uber</span>
+      <span class="badge">3D Pickup</span>
+    </header>
+
+    <section class="scene" aria-label="3D view of pickup area">
+      <div class="ground">
+        <div class="road"></div>
+
+        <div class="building terminal">
+          <div class="side"></div><div class="side2"></div><div class="roof"></div>
+          <div class="label">Terminal B</div>
+        </div>
+        <div class="building garage">
+          <div class="side"></div><div class="side2"></div><div class="roof"></div>
+          <div class="label">Garage</div>
+        </div>
+
+        <div class="rider" title="You"></div>
+        <div class="pin" title="Pickup spot"></div>
+        <div class="car" title="Your driver"></div>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <p class="eta">Driver arriving in 4 min</p>
+      <h1 class="headline" id="headline">Meet at Zone C, Door 4 – Arrivals level</h1>
+
+      <div class="driver">
+        <div class="avatar">JM</div>
+        <div>
+          <strong>Jordan · Toyota Camry</strong><br>
+          <small>Black · ABC 1234</small>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
